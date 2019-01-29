@@ -1,25 +1,28 @@
 package fr.mrcraftcod.ia;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 /**
  * @author hubert.cardot
  */
-public class Main{  // pg du MLP, r�seau de neurones � r�tropropagation
-	
-	private static int nbClasses = 3, nbCaract = 4, nbEx = 50, nbExApprent = 25;
-	private static int nbCouches = 3, nbCaches = 6, nbApprent = 2000;
-	private static int nbNeurones[] = {
+public class Main{
+	private final static int nbClasses = 3;
+	private final static int nbCaract = 4;
+	private final static int nbEx = 50;
+	private final static int nbExApprent = 25;
+	private final static int nbCouches = 3, nbCaches = 6, nbApprent = 2000;
+	private final static int[] nbNeurones = {
 			nbCaract + 1,
 			nbCaches + 1,
 			nbClasses
 	}; //+1 pour neurone fixe
-	private static Double[][][] data = new Double[nbClasses][nbEx][nbCaract];
-	private static Double[][][] poids;
-	private static Double[][] N;
-	private static Double[][] S;
-	private static Double coeffApprent = 0.01;
-	private static Double coeffSigmoide = 2.0 / 3;
+	private final static Double[][][] data = new Double[nbClasses][nbEx][nbCaract];
+	private final static Double[][][] poids = new Double[nbCouches - 1][][];
+	private final static Double[][] N = new Double[nbCouches][];
+	private final static Double[][] S = new Double[nbCouches][];
+	private final static Double coeffApprent = 0.01;
+	private final static Double coeffSigmoide = 2.0 / 3;
 	
 	private static Double fSigmoide(Double x){       // f()
 		return Math.tanh(coeffSigmoide * x);
@@ -38,8 +41,7 @@ public class Main{  // pg du MLP, r�seau de neurones � r�tropropagation
 	
 	private static void initialisation(){
 		lectureFichier();
-		//Allocation et initialisation al�atoire des poids
-		poids = new Double[nbCouches - 1][][];
+		
 		for(int couche = 0; couche < nbCouches - 1; couche++){
 			poids[couche] = new Double[nbNeurones[couche + 1]][];
 			for(int i = 0; i < nbNeurones[couche + 1]; i++){
@@ -49,9 +51,7 @@ public class Main{  // pg du MLP, r�seau de neurones � r�tropropagation
 				}
 			}
 		}
-		//Allocation des �tats internes N et des sorties S des neurones
-		N = new Double[nbCouches][];
-		S = new Double[nbCouches][];
+		
 		for(int couche = 0; couche < nbCouches; couche++){
 			N[couche] = new Double[nbNeurones[couche]];
 			S[couche] = new Double[nbNeurones[couche]];
@@ -81,7 +81,7 @@ public class Main{  // pg du MLP, r�seau de neurones � r�tropropagation
 		System.out.println("Taux de reconnaissance : " + (Ok * 100. / (Ok + PasOk)));
 	}
 	
-	private static void propagation(Double X[]){
+	private static void propagation(Double[] X){
 		//---------- � faire
 	}
 	
