@@ -69,23 +69,27 @@ public class Main{
 	}
 	
 	private static void evaluation(){
-		int classeTrouvee, Ok = 0, PasOk = 0;
+		int correctClass = 0;
+		int total = 0;
 		for(int i = 0; i < nbClasses; i++){
-			for(int j = nbExApprent; j < nbEx; j++){ // parcourt les ex. de test
-				//TODO calcul des N et S des neurones
-				classeTrouvee = 0;// recherche max parmi les sorties RN
+			for(int j = nbExApprent; j < nbEx; j++){
+				double max = Double.MIN_VALUE;
+				int classe = -1;
 				double[] output = applyNetwork(data[i][j]);
-				//TODO
-				//System.out.println("classe "+i+" classe trouv�e "+classeTrouvee);
-				if(i == classeTrouvee){
-					Ok++;
+				for(int k = 0; k < output.length; k++){
+					if(output[k] > max){
+						max = output[k];
+						classe = k;
+					}
 				}
-				else{
-					PasOk++;
+				LOGGER.debug("Classe {} - classe trouvée {}", i, classe);
+				if(i == classe){
+					correctClass++;
 				}
+				total++;
 			}
 		}
-		System.out.println("Taux de reconnaissance : " + (Ok * 100. / (Ok + PasOk)));
+		LOGGER.info("Taux de reconnaissance : {}", correctClass * 100.0 / total);
 	}
 	
 	private static double[] applyNetwork(double[] data){
