@@ -65,27 +65,22 @@ public class Main{
 	}
 	
 	private static void apprentissage(){
-		//TODO
-	}
-	
-	private static void evaluation(){
-		int classeTrouvee, Ok = 0, PasOk = 0;
-		for(int i = 0; i < nbClasses; i++){
-			for(int j = nbExApprent; j < nbEx; j++){ // parcourt les ex. de test
-				//TODO calcul des N et S des neurones
-				classeTrouvee = 0;// recherche max parmi les sorties RN
-				double[] output = applyNetwork(data[i][j]);
-				//TODO
-				//System.out.println("classe "+i+" classe trouv�e "+classeTrouvee);
-				if(i == classeTrouvee){
-					Ok++;
+		for(int klass = 0; klass < nbClasses; klass++){
+			for(int apprentIndex = 0; apprentIndex < nbExApprent; apprentIndex++){
+				double[] results = applyNetwork(data[klass][apprentIndex]);
+				double[] errors = new double[results.length];
+				for(int errorIndex = 0; errorIndex < errors.length; errorIndex++){
+					errors[errorIndex] = Math.pow(results[errorIndex] - (klass == errorIndex ? 1 : 0), 2);
 				}
-				else{
-					PasOk++;
+				for(int errorIndex = 0; errorIndex < errors.length; errorIndex++){
+					retropropagation(errorIndex, errors[errorIndex]);
 				}
 			}
 		}
-		System.out.println("Taux de reconnaissance : " + (Ok * 100. / (Ok + PasOk)));
+	}
+	
+	private static void retropropagation(int classe, double error){
+		// TODO
 	}
 	
 	private static double[] applyNetwork(double[] data){
@@ -106,12 +101,28 @@ public class Main{
 		return resCouche;
 	}
 	
-	private static void propagation(Double[] X){
-		//TODO
-	}
-	
-	private static void retropropagation(int classe){
-		// TODO
+	private static void evaluation(){
+		int correctClass = 0;
+		int total = 0;
+		for(int klass = 0; klass < nbClasses; klass++){
+			for(int exIndex = nbExApprent; exIndex < nbEx; exIndex++){
+				double max = Double.MIN_VALUE;
+				int classe = -1;
+				double[] output = applyNetwork(data[klass][exIndex]);
+				for(int layerIndex = 0; layerIndex < output.length; layerIndex++){
+					if(output[layerIndex] > max){
+						max = output[layerIndex];
+						classe = layerIndex;
+					}
+				}
+				LOGGER.debug("Classe {} - classe trouvée {}", klass, classe);
+				if(klass == classe){
+					correctClass++;
+				}
+				total++;
+			}
+		}
+		LOGGER.info("Taux de reconnaissance : {}", correctClass * 100.0 / total);
 	}
 	
 	private static void readFile(Path path){
@@ -119,9 +130,9 @@ public class Main{
 		int n = 0;
 		try{
 			for(String line : Files.readAllLines(path)){
-				for(int i = 0; i < nbCaract; i++){
-					String valCarac = line.substring(i * nbCaract, i * nbCaract + 3);
-					data[classe][n][i] = Double.parseDouble(valCarac);
+				for(int caracIndex = 0; caracIndex < nbCaract; caracIndex++){
+					String valCarac = line.substring(caracIndex * nbCaract, caracIndex * nbCaract + 3);
+					data[classe][n][caracIndex] = Double.parseDouble(valCarac);
 				}
 				if(++n == nbEx){
 					n = 0;
