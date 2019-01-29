@@ -87,12 +87,11 @@ public class Main{
 
 		double[] resCouche = new double[nbClasses];
 		for(int i = 0; i < poids.length; i++){
-			double[][] poid = poids[i];
 			resCouche = new double[nbNeurones[i]];
 			for (int j = 0; j < nbNeurones[i]; j++) {
 				resCouche[0] = 0;
 				for (int k = 0; k < data.length +1; k++) {
-					resCouche[j] += poid[j][k] * (k >= data.length? 1 : data[k]);
+					resCouche[j] += poids[i][j][k] * (k >= data.length? 1 : data[k]);
 				}
 			}
 			data = resCouche;
