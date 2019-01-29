@@ -65,16 +65,16 @@ public class Main{
 	}
 	
 	private static void apprentissage(){
-		//---------- � faire
+		//TODO
 	}
 	
 	private static void evaluation(){
 		int classeTrouvee, Ok = 0, PasOk = 0;
 		for(int i = 0; i < nbClasses; i++){
 			for(int j = nbExApprent; j < nbEx; j++){ // parcourt les ex. de test
-				//---------- � faire              // calcul des N et S des neurones
+				//TODO calcul des N et S des neurones
 				classeTrouvee = 0;                // recherche max parmi les sorties RN
-				//---------- � faire
+				//TODO
 				//System.out.println("classe "+i+" classe trouv�e "+classeTrouvee);
 				if(i == classeTrouvee){
 					Ok++;
@@ -88,11 +88,11 @@ public class Main{
 	}
 	
 	private static void propagation(Double[] X){
-		//---------- � faire
+		//TODO
 	}
 	
 	private static void retropropagation(int classe){
-		//---------- � faire
+		// TODO
 	}
 	
 	private static void readFile(Path path){
