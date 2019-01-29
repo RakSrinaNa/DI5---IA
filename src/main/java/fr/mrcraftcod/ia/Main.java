@@ -1,17 +1,23 @@
 package fr.mrcraftcod.ia;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * @author hubert.cardot
  */
 public class Main{
+	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+	
 	private final static int nbClasses = 3;
 	private final static int nbCaract = 4;
 	private final static int nbEx = 50;
 	private final static int nbExApprent = 25;
-	private final static int nbCouches = 3, nbCaches = 6, nbApprent = 2000;
+	private final static int nbCouches = 3;
+	private final static int nbCaches = 6;
+	private final static int nbApprent = 2000;
 	private final static int[] nbNeurones = {
 			nbCaract + 1,
 			nbCaches + 1,
@@ -24,23 +30,23 @@ public class Main{
 	private final static Double coeffApprent = 0.01;
 	private final static Double coeffSigmoide = 2.0 / 3;
 	
-	private static Double fSigmoide(Double x){       // f()
+	private static Double fSigmoide(Double x){
 		return Math.tanh(coeffSigmoide * x);
 	}
 	
-	private static Double dfSigmoide(Double x){       // df()
+	private static Double dfSigmoide(Double x){
 		return coeffSigmoide / Math.pow(Math.cosh(coeffSigmoide * x), 2);
 	}
 	
 	public static void main(String[] args){
-		System.out.println("Caches=" + nbCaches + " App=" + nbApprent + " coef=" + coeffApprent);
+		LOGGER.info("Caches={} App={} coef={}", nbCaches, nbApprent, coeffApprent);
 		initialisation();
 		apprentissage();
 		evaluation();
 	}
 	
 	private static void initialisation(){
-		lectureFichier();
+		readFile(Path.of("iris.data"));
 		
 		for(int couche = 0; couche < nbCouches - 1; couche++){
 			poids[couche] = new Double[nbNeurones[couche + 1]][];
@@ -89,17 +95,14 @@ public class Main{
 		//---------- � faire
 	}
 	
-	private static void lectureFichier(){
-		// lecture des donn�es � partir du fichier iris.data
-		String ligne, sousChaine;
-		int classe = 0, n = 0;
+	private static void readFile(Path path){
+		int classe = 0;
+		int n = 0;
 		try{
-			BufferedReader fic = new BufferedReader(new FileReader("iris.data"));
-			while((ligne = fic.readLine()) != null){
+			for(String line : Files.readAllLines(path)){
 				for(int i = 0; i < nbCaract; i++){
-					sousChaine = ligne.substring(i * nbCaract, i * nbCaract + 3);
-					data[classe][n][i] = Double.parseDouble(sousChaine);
-					//System.out.println(data[classe][n][i]+" "+classe+" "+n);
+					String valCarac = line.substring(i * nbCaract, i * nbCaract + 3);
+					data[classe][n][i] = Double.parseDouble(valCarac);
 				}
 				if(++n == nbEx){
 					n = 0;
@@ -108,7 +111,7 @@ public class Main{
 			}
 		}
 		catch(Exception e){
-			System.out.println(e.toString());
+			LOGGER.error("Error parsing file", e);
 		}
 	}
-}  //------------------fin classe Main--------------------
+}
