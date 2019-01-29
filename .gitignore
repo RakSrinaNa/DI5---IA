@@ -1,5 +1,7 @@
 *.iml
 *.log
+*.jar
+*.class
 .idea
 target
 settings.properties
