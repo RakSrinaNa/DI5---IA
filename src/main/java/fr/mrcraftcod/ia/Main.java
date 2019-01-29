@@ -23,12 +23,12 @@ public class Main{
 			nbCaches + 1,
 			nbClasses
 	}; //+1 pour neurone fixe
-	private final static Double[][][] data = new Double[nbClasses][nbEx][nbCaract];
-	private final static Double[][][] poids = new Double[nbCouches - 1][][];
-	private final static Double[][] N = new Double[nbCouches][];
-	private final static Double[][] S = new Double[nbCouches][];
-	private final static Double coeffApprent = 0.01;
-	private final static Double coeffSigmoide = 2.0 / 3;
+	private final static double[][][] data = new double[nbClasses][nbEx][nbCaract];
+	private final static double[][][] poids = new double[nbCouches - 1][][];
+	private final static double[][] N = new double[nbCouches][];
+	private final static double[][] S = new double[nbCouches][];
+	private final static double coeffApprent = 0.01;
+	private final static double coeffSigmoide = 2.0 / 3;
 	
 	private static Double fSigmoide(Double x){
 		return Math.tanh(coeffSigmoide * x);
@@ -49,9 +49,9 @@ public class Main{
 		readFile(Path.of("iris.data"));
 		
 		for(int couche = 0; couche < nbCouches - 1; couche++){
-			poids[couche] = new Double[nbNeurones[couche + 1]][];
+			poids[couche] = new double[nbNeurones[couche + 1]][];
 			for(int i = 0; i < nbNeurones[couche + 1]; i++){
-				poids[couche][i] = new Double[nbNeurones[couche]];
+				poids[couche][i] = new double[nbNeurones[couche]];
 				for(int j = 0; j < nbNeurones[couche]; j++){
 					poids[couche][i][j] = (Math.random() - 0.5) / 10; //dans [-0,05; +0,05[
 				}
@@ -59,8 +59,8 @@ public class Main{
 		}
 		
 		for(int couche = 0; couche < nbCouches; couche++){
-			N[couche] = new Double[nbNeurones[couche]];
-			S[couche] = new Double[nbNeurones[couche]];
+			N[couche] = new double[nbNeurones[couche]];
+			S[couche] = new double[nbNeurones[couche]];
 		}
 	}
 	
@@ -73,7 +73,8 @@ public class Main{
 		for(int i = 0; i < nbClasses; i++){
 			for(int j = nbExApprent; j < nbEx; j++){ // parcourt les ex. de test
 				//TODO calcul des N et S des neurones
-				classeTrouvee = 0;                // recherche max parmi les sorties RN
+				classeTrouvee = 0;// recherche max parmi les sorties RN
+				double[] output = applyNetwork(data[i][j]);
 				//TODO
 				//System.out.println("classe "+i+" classe trouv�e "+classeTrouvee);
 				if(i == classeTrouvee){
@@ -85,6 +86,10 @@ public class Main{
 			}
 		}
 		System.out.println("Taux de reconnaissance : " + (Ok * 100. / (Ok + PasOk)));
+	}
+	
+	private static double[] applyNetwork(double[] data){
+		return new double[]{};
 	}
 	
 	private static void propagation(Double[] X){
