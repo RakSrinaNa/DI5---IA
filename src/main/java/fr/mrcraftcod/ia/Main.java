@@ -7,15 +7,19 @@ import java.io.*;
  */
 public class Main{  // pg du MLP, r�seau de neurones � r�tropropagation
 	
-	static int NbClasses = 3, NbCaract = 4, NbEx = 50, NbExApprent = 25;
-	static int NbCouches = 3, NbCaches = 6, NbApprent = 2000;
-	static int NbNeurones[] = {
-			NbCaract + 1,
-			NbCaches + 1,
-			NbClasses
+	private static int nbClasses = 3, nbCaract = 4, nbEx = 50, nbExApprent = 25;
+	private static int nbCouches = 3, nbCaches = 6, nbApprent = 2000;
+	private static int nbNeurones[] = {
+			nbCaract + 1,
+			nbCaches + 1,
+			nbClasses
 	}; //+1 pour neurone fixe
-	static Double data[][][] = new Double[NbClasses][NbEx][NbCaract];
-	static Double poids[][][], N[][], S[][], coeffApprent = 0.01, coeffSigmoide = 2.0 / 3;
+	private static Double[][][] data = new Double[nbClasses][nbEx][nbCaract];
+	private static Double[][][] poids;
+	private static Double[][] N;
+	private static Double[][] S;
+	private static Double coeffApprent = 0.01;
+	private static Double coeffSigmoide = 2.0 / 3;
 	
 	private static Double fSigmoide(Double x){       // f()
 		return Math.tanh(coeffSigmoide * x);
@@ -26,7 +30,7 @@ public class Main{  // pg du MLP, r�seau de neurones � r�tropropagation
 	}
 	
 	public static void main(String[] args){
-		System.out.println("Caches=" + NbCaches + " App=" + NbApprent + " coef=" + coeffApprent);
+		System.out.println("Caches=" + nbCaches + " App=" + nbApprent + " coef=" + coeffApprent);
 		initialisation();
 		apprentissage();
 		evaluation();
@@ -35,22 +39,22 @@ public class Main{  // pg du MLP, r�seau de neurones � r�tropropagation
 	private static void initialisation(){
 		lectureFichier();
 		//Allocation et initialisation al�atoire des poids
-		poids = new Double[NbCouches - 1][][];
-		for(int couche = 0; couche < NbCouches - 1; couche++){
-			poids[couche] = new Double[NbNeurones[couche + 1]][];
-			for(int i = 0; i < NbNeurones[couche + 1]; i++){
-				poids[couche][i] = new Double[NbNeurones[couche]];
-				for(int j = 0; j < NbNeurones[couche]; j++){
+		poids = new Double[nbCouches - 1][][];
+		for(int couche = 0; couche < nbCouches - 1; couche++){
+			poids[couche] = new Double[nbNeurones[couche + 1]][];
+			for(int i = 0; i < nbNeurones[couche + 1]; i++){
+				poids[couche][i] = new Double[nbNeurones[couche]];
+				for(int j = 0; j < nbNeurones[couche]; j++){
 					poids[couche][i][j] = (Math.random() - 0.5) / 10; //dans [-0,05; +0,05[
 				}
 			}
 		}
 		//Allocation des �tats internes N et des sorties S des neurones
-		N = new Double[NbCouches][];
-		S = new Double[NbCouches][];
-		for(int couche = 0; couche < NbCouches; couche++){
-			N[couche] = new Double[NbNeurones[couche]];
-			S[couche] = new Double[NbNeurones[couche]];
+		N = new Double[nbCouches][];
+		S = new Double[nbCouches][];
+		for(int couche = 0; couche < nbCouches; couche++){
+			N[couche] = new Double[nbNeurones[couche]];
+			S[couche] = new Double[nbNeurones[couche]];
 		}
 	}
 	
@@ -60,8 +64,8 @@ public class Main{  // pg du MLP, r�seau de neurones � r�tropropagation
 	
 	private static void evaluation(){
 		int classeTrouvee, Ok = 0, PasOk = 0;
-		for(int i = 0; i < NbClasses; i++){
-			for(int j = NbExApprent; j < NbEx; j++){ // parcourt les ex. de test
+		for(int i = 0; i < nbClasses; i++){
+			for(int j = nbExApprent; j < nbEx; j++){ // parcourt les ex. de test
 				//---------- � faire              // calcul des N et S des neurones
 				classeTrouvee = 0;                // recherche max parmi les sorties RN
 				//---------- � faire
@@ -92,12 +96,12 @@ public class Main{  // pg du MLP, r�seau de neurones � r�tropropagation
 		try{
 			BufferedReader fic = new BufferedReader(new FileReader("iris.data"));
 			while((ligne = fic.readLine()) != null){
-				for(int i = 0; i < NbCaract; i++){
-					sousChaine = ligne.substring(i * NbCaract, i * NbCaract + 3);
+				for(int i = 0; i < nbCaract; i++){
+					sousChaine = ligne.substring(i * nbCaract, i * nbCaract + 3);
 					data[classe][n][i] = Double.parseDouble(sousChaine);
 					//System.out.println(data[classe][n][i]+" "+classe+" "+n);
 				}
-				if(++n == NbEx){
+				if(++n == nbEx){
 					n = 0;
 					classe++;
 				}

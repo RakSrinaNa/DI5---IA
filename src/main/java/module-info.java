@@ -7,5 +7,4 @@
 module IA {
 	requires java.scripting;
 	requires org.slf4j;
-	requires rt;
 }
