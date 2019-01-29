@@ -65,25 +65,44 @@ public class Main{
 	}
 	
 	private static void apprentissage(){
-		//TODO
+		for(int klass = 0; klass < nbClasses; klass++){
+			for(int apprentIndex = 0; apprentIndex < nbExApprent; apprentIndex++){
+				double[] results = applyNetwork(data[klass][apprentIndex]);
+				double[] errors = new double[results.length];
+				for(int errorIndex = 0; errorIndex < errors.length; errorIndex++){
+					errors[errorIndex] = Math.pow(results[errorIndex] - (klass == errorIndex ? 1 : 0), 2);
+				}
+				for(int errorIndex = 0; errorIndex < errors.length; errorIndex++){
+					retropropagation(errorIndex, errors[errorIndex]);
+				}
+			}
+		}
+	}
+	
+	private static void retropropagation(int classe, double error){
+		// TODO
+	}
+	
+	private static double[] applyNetwork(double[] data){
+		return new double[]{};
 	}
 	
 	private static void evaluation(){
 		int correctClass = 0;
 		int total = 0;
-		for(int i = 0; i < nbClasses; i++){
-			for(int j = nbExApprent; j < nbEx; j++){
+		for(int klass = 0; klass < nbClasses; klass++){
+			for(int exIndex = nbExApprent; exIndex < nbEx; exIndex++){
 				double max = Double.MIN_VALUE;
 				int classe = -1;
-				double[] output = applyNetwork(data[i][j]);
-				for(int k = 0; k < output.length; k++){
-					if(output[k] > max){
-						max = output[k];
-						classe = k;
+				double[] output = applyNetwork(data[klass][exIndex]);
+				for(int layerIndex = 0; layerIndex < output.length; layerIndex++){
+					if(output[layerIndex] > max){
+						max = output[layerIndex];
+						classe = layerIndex;
 					}
 				}
-				LOGGER.debug("Classe {} - classe trouvée {}", i, classe);
-				if(i == classe){
+				LOGGER.debug("Classe {} - classe trouvée {}", klass, classe);
+				if(klass == classe){
 					correctClass++;
 				}
 				total++;
@@ -92,26 +111,14 @@ public class Main{
 		LOGGER.info("Taux de reconnaissance : {}", correctClass * 100.0 / total);
 	}
 	
-	private static double[] applyNetwork(double[] data){
-		return new double[]{};
-	}
-	
-	private static void propagation(Double[] X){
-		//TODO
-	}
-	
-	private static void retropropagation(int classe){
-		// TODO
-	}
-	
 	private static void readFile(Path path){
 		int classe = 0;
 		int n = 0;
 		try{
 			for(String line : Files.readAllLines(path)){
-				for(int i = 0; i < nbCaract; i++){
-					String valCarac = line.substring(i * nbCaract, i * nbCaract + 3);
-					data[classe][n][i] = Double.parseDouble(valCarac);
+				for(int caracIndex = 0; caracIndex < nbCaract; caracIndex++){
+					String valCarac = line.substring(caracIndex * nbCaract, caracIndex * nbCaract + 3);
+					data[classe][n][caracIndex] = Double.parseDouble(valCarac);
 				}
 				if(++n == nbEx){
 					n = 0;
