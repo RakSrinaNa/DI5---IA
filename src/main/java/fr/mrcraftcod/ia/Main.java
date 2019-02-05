@@ -94,7 +94,7 @@ public class Main{
 		for(var fromLayer = nbCouches - 2; fromLayer >= 0; fromLayer--){
 			for(int neuroneFrom = 0; neuroneFrom < nbNeurones[fromLayer]; neuroneFrom++){
 				var sum = 0D;
-				for(int neuroneTo = 0; neuroneTo < nbNeurones[fromLayer + 1]; neuroneTo++){
+				for(int neuroneTo = fromLayer == nbCouches - 2 ? 0 : 1; neuroneTo < nbNeurones[fromLayer + 1]; neuroneTo++){
 					sum += deltas[fromLayer + 1][neuroneTo] * poids[fromLayer][neuroneTo][neuroneFrom];
 				}
 				deltas[fromLayer][neuroneFrom] = sum * dfSigmoide(N[fromLayer][neuroneFrom]);
