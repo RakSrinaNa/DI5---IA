@@ -19,7 +19,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="fr.mrcraftcod" level="info">
+        <Logger name="fr.mrcraftcod" level="debug">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
         </Logger>

@@ -83,6 +83,30 @@ public class Main{
 		// TODO
 	}
 	
+	private static void evaluation(){
+		int correctClass = 0;
+		int total = 0;
+		for(int klass = 0; klass < nbClasses; klass++){
+			for(int exIndex = nbExApprent; exIndex < nbEx; exIndex++){
+				double max = -Double.MAX_VALUE;
+				int classe = -1;
+				double[] output = applyNetwork(data[klass][exIndex]);
+				for(int layerIndex = 0; layerIndex < output.length; layerIndex++){
+					if(output[layerIndex] > max){
+						max = output[layerIndex];
+						classe = layerIndex;
+					}
+				}
+				LOGGER.debug("Classe {} - classe trouvée {}", klass, classe);
+				if(klass == classe){
+					correctClass++;
+				}
+				total++;
+			}
+		}
+		LOGGER.info("Taux de reconnaissance : {}%", correctClass * 100.0 / total);
+	}
+	
 	private static double[] applyNetwork(double[] data){
 		/* Init first nodes */
 		N[0][0] = 1;
@@ -103,31 +127,7 @@ public class Main{
 			}
 		}
 		
-		return data;
-	}
-	
-	private static void evaluation(){
-		int correctClass = 0;
-		int total = 0;
-		for(int klass = 0; klass < nbClasses; klass++){
-			for(int exIndex = nbExApprent; exIndex < nbEx; exIndex++){
-				double max = Double.MIN_VALUE;
-				int classe = -1;
-				double[] output = applyNetwork(data[klass][exIndex]);
-				for(int layerIndex = 0; layerIndex < output.length; layerIndex++){
-					if(output[layerIndex] > max){
-						max = output[layerIndex];
-						classe = layerIndex;
-					}
-				}
-				LOGGER.debug("Classe {} - classe trouvée {}", klass, classe);
-				if(klass == classe){
-					correctClass++;
-				}
-				total++;
-			}
-		}
-		LOGGER.info("Taux de reconnaissance : {}%", correctClass * 100.0 / total);
+		return S[nbCouches - 1];
 	}
 	
 	private static void readFile(Path path){
