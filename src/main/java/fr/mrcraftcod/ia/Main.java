@@ -80,7 +80,24 @@ public class Main{
 	}
 	
 	private static void retropropagation(int classe, double error){
-		// TODO
+		double[][] deltas = new double[nbCouches][];
+		for(int i = 0; i < nbCouches; i++){
+			deltas[i] = new double[nbNeurones[i]];
+		}
+		// TODO: DELTA=-mu*delta_i*Sj
+		
+		// TODO: Couche de sortie: delta_i = (Si-Di) * f'(Ni)
+		var exitLayer = nbCouches - 1;
+		for(int neuroneIndex = 0; neuroneIndex < nbNeurones[exitLayer]; neuroneIndex++){
+			deltas[exitLayer][neuroneIndex] = (S[exitLayer][neuroneIndex] * error) * dfSigmoide(N[exitLayer][neuroneIndex]);
+		}
+		
+		for(var currentLayer = nbCouches - 2; currentLayer >= 0; currentLayer--){
+			for(int neuroneIndex = 0; neuroneIndex < nbNeurones[currentLayer]; neuroneIndex++){
+				// TODO: Autre couche: delta_i = sum_k(delta_k * w_ki) * f'(Ni)
+				deltas[exitLayer][neuroneIndex] = 0;
+			}
+		}
 	}
 	
 	private static void evaluation(){
