@@ -89,13 +89,13 @@ public class Main{
 		}
 		
 		// TODO: Autre couche: delta_i = sum_k(delta_k * w_ki) * f'(Ni)
-		for(var currentLayer = nbCouches - 2; currentLayer >= 0; currentLayer--){
-			for(int neuroneIndex = 0; neuroneIndex < nbNeurones[currentLayer]; neuroneIndex++){
+		for(var fromLayer = nbCouches - 2; fromLayer >= 0; fromLayer--){
+			for(int neuroneFrom = 0; neuroneFrom < nbNeurones[fromLayer]; neuroneFrom++){
 				var sum = 0D;
-				for(int k = 0; k < nbNeurones[currentLayer + 1]; k++){
-					sum += deltas[currentLayer + 1][k] * poids[currentLayer][k][neuroneIndex];
+				for(int neuroneTo = 0; neuroneTo < nbNeurones[fromLayer + 1]; neuroneTo++){
+					sum += deltas[fromLayer + 1][neuroneTo] * poids[fromLayer][neuroneTo][neuroneFrom];
 				}
-				deltas[currentLayer][neuroneIndex] = sum * dfSigmoide(N[currentLayer][neuroneIndex]);
+				deltas[fromLayer][neuroneFrom] = sum * dfSigmoide(N[fromLayer][neuroneFrom]);
 			}
 		}
 		
