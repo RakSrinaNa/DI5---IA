@@ -84,18 +84,30 @@ public class Main{
 		for(int i = 0; i < nbCouches; i++){
 			deltas[i] = new double[nbNeurones[i]];
 		}
-		// TODO: DELTA=-mu*delta_i*Sj
 		
 		// TODO: Couche de sortie: delta_i = (Si-Di) * f'(Ni)
 		var exitLayer = nbCouches - 1;
 		for(int neuroneIndex = 0; neuroneIndex < nbNeurones[exitLayer]; neuroneIndex++){
-			deltas[exitLayer][neuroneIndex] = (S[exitLayer][neuroneIndex] * error) * dfSigmoide(N[exitLayer][neuroneIndex]);
+			deltas[exitLayer][neuroneIndex] = classe == neuroneIndex ? (S[exitLayer][neuroneIndex] * error) * dfSigmoide(N[exitLayer][neuroneIndex]) : 0;
 		}
 		
+		// TODO: Autre couche: delta_i = sum_k(delta_k * w_ki) * f'(Ni)
 		for(var currentLayer = nbCouches - 2; currentLayer >= 0; currentLayer--){
 			for(int neuroneIndex = 0; neuroneIndex < nbNeurones[currentLayer]; neuroneIndex++){
-				// TODO: Autre couche: delta_i = sum_k(delta_k * w_ki) * f'(Ni)
-				deltas[exitLayer][neuroneIndex] = 0;
+				var sum = 0D;
+				for(int k = 0; k < nbNeurones[currentLayer + 1]; k++){
+					sum += deltas[currentLayer + 1][k] * poids[currentLayer][k][neuroneIndex];
+				}
+				deltas[exitLayer][neuroneIndex] = sum * dfSigmoide(N[currentLayer][neuroneIndex]);
+			}
+		}
+		
+		// TODO: DELTA=-mu*delta_i*Sj
+		for(int layerFrom = 0; layerFrom < nbCouches - 1; layerFrom++){
+			for(int neuroneTo = 0; neuroneTo < nbNeurones[layerFrom + 1]; neuroneTo++){
+				for(int neuroneFrom = 0; neuroneFrom < nbNeurones[layerFrom]; neuroneFrom++){
+					poids[layerFrom][neuroneTo][neuroneFrom] += -coeffApprent * deltas[layerFrom + 1][neuroneTo] * S[layerFrom][neuroneFrom];
+				}
 			}
 		}
 	}
