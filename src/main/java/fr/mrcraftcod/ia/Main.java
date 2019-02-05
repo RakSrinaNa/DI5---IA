@@ -67,6 +67,7 @@ public class Main{
 	private static void apprentissage(){
 		for(int klass = 0; klass < nbClasses; klass++){
 			for(int apprentIndex = 0; apprentIndex < nbExApprent; apprentIndex++){
+				LOGGER.debug("Apprent class={}, index={}", klass, apprentIndex);
 				double[] results = applyNetwork(data[klass][apprentIndex]);
 				double[] errors = new double[results.length];
 				for(int errorIndex = 0; errorIndex < errors.length; errorIndex++){
@@ -126,9 +127,12 @@ public class Main{
 						classe = layerIndex;
 					}
 				}
-				LOGGER.debug("Classe {} - classe trouvée {}", klass, classe);
 				if(klass == classe){
+					LOGGER.debug("Classe {} - classe trouvée {}", klass, classe);
 					correctClass++;
+				}
+				else{
+					LOGGER.warn("Classe {} - classe trouvée {}", klass, classe);
 				}
 				total++;
 			}
