@@ -85,7 +85,7 @@ public class Main{
 		// TODO: Couche de sortie: delta_i = (Si-Di) * f'(Ni)
 		var exitLayer = nbCouches - 1;
 		for(int neuroneIndex = 0; neuroneIndex < nbNeurones[exitLayer]; neuroneIndex++){
-			deltas[exitLayer][neuroneIndex] = (S[exitLayer][neuroneIndex] - desiredOutput) * dfSigmoide(N[exitLayer][neuroneIndex]);
+			deltas[exitLayer][neuroneIndex] = classe == neuroneIndex ? ((S[exitLayer][neuroneIndex] - desiredOutput) * dfSigmoide(N[exitLayer][neuroneIndex])) : 0;
 		}
 		
 		// TODO: Autre couche: delta_i = sum_k(delta_k * w_ki) * f'(Ni)
