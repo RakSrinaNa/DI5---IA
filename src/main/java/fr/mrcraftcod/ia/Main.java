@@ -92,7 +92,7 @@ public class Main{
 		
 		// TODO: Autre couche: delta_i = sum_k(delta_k * w_ki) * f'(Ni)
 		for(var fromLayer = nbCouches - 2; fromLayer >= 0; fromLayer--){
-			for(int neuroneFrom = 1; neuroneFrom < nbNeurones[fromLayer]; neuroneFrom++){
+			for(int neuroneFrom = 0; neuroneFrom < nbNeurones[fromLayer]; neuroneFrom++){
 				var sum = 0D;
 				for(int neuroneTo = 0; neuroneTo < nbNeurones[fromLayer + 1]; neuroneTo++){
 					sum += deltas[fromLayer + 1][neuroneTo] * poids[fromLayer][neuroneTo][neuroneFrom];
