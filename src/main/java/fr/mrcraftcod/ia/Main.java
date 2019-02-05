@@ -69,12 +69,8 @@ public class Main{
 			for(int apprentIndex = 0; apprentIndex < nbExApprent; apprentIndex++){
 				LOGGER.debug("Apprent class={}, index={}", klass, apprentIndex);
 				double[] results = applyNetwork(data[klass][apprentIndex]);
-				double[] errors = new double[results.length];
-				for(int errorIndex = 0; errorIndex < errors.length; errorIndex++){
-					errors[errorIndex] = Math.pow(results[errorIndex] - (klass == errorIndex ? 1 : 0), 2);
-				}
-				for(int errorIndex = 0; errorIndex < errors.length; errorIndex++){
-					retropropagation(errorIndex, errors[errorIndex]);
+				for(int i = 0; i < results.length; i++){
+					retropropagation(i, i == klass ? 1 : 0);
 				}
 			}
 		}
