@@ -99,7 +99,7 @@ public class Main{
 				for(int k = 0; k < nbNeurones[currentLayer + 1]; k++){
 					sum += deltas[currentLayer + 1][k] * poids[currentLayer][k][neuroneIndex];
 				}
-				deltas[exitLayer][neuroneIndex] = sum * dfSigmoide(N[currentLayer][neuroneIndex]);
+				deltas[currentLayer][neuroneIndex] = sum * dfSigmoide(N[currentLayer][neuroneIndex]);
 			}
 		}
 		
