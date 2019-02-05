@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
+import java.util.Scanner;
 
 /**
  * @author hubert.cardot
@@ -15,18 +17,19 @@ public class Main{
 	private final static int nbCaract = 4;
 	private final static int nbEx = 50;
 	private final static int nbExApprent = 25;
-	private final static int nbCouches = 3;
+	private final static int nbExValid = 10;
+	private static int nbCouches = 3;
 	private final static int nbCaches = 6;
-	private final static int nbApprent = 2000;
-	private final static int[] nbNeurones = {
+	private static int nbApprent = 2000;
+	private static int[] nbNeurones = {
 			nbCaract + 1,
 			nbCaches + 1,
 			nbClasses
 	}; //+1 pour neurone fixe
-	private final static double[][][] data = new double[nbClasses][nbEx][nbCaract];
-	private final static double[][][] poids = new double[nbCouches - 1][][];
-	private final static double[][] N = new double[nbCouches][];
-	private final static double[][] S = new double[nbCouches][];
+	private static double[][][] data;
+	private static double[][][] poids;
+	private static double[][] N;
+	private static double[][] S;
 	private final static double coeffApprent = 0.01;
 	private final static double coeffSigmoide = 2.0 / 3;
 	
@@ -40,14 +43,42 @@ public class Main{
 	
 	public static void main(String[] args){
 		LOGGER.info("Caches={} App={} coef={}", nbCaches, nbApprent, coeffApprent);
-		initialisation();
-		apprentissage();
-		evaluation();
+		Scanner sc = new Scanner(System.in);
+		boolean cont = true;
+		while(cont)
+		{
+			initialisation();
+			apprentissage();
+			evaluation();
+			LOGGER.info("Wanna continue (y/n)?");
+			cont = Objects.equals("y", sc.nextLine());
+			if(cont)
+			{
+				LOGGER.info("Nb d'apprent? ");
+				nbApprent = Math.max(1, Integer.parseInt(sc.nextLine()));
+				LOGGER.info("Nb de couches cachées? ");
+				nbCouches = Math.max(0, Integer.parseInt(sc.nextLine())) + 2;
+				nbNeurones = new int[nbCouches];
+				nbNeurones[0] = nbCaract + 1;
+				nbNeurones[nbCouches - 1] = nbClasses;
+				for (int i = 1; i < nbCouches - 1; i++) {
+					LOGGER.info("Nb de neurones couche cachée " + i + "? ");
+					nbNeurones[i] = Math.max(0, Integer.parseInt(sc.nextLine())) + 1;
+				}
+			}
+			LOGGER.info("Technically you should change the values but nope, thanks");
+		}
+		valid();
 	}
 	
 	private static void initialisation(){
+		data = new double[nbClasses][nbEx][nbCaract];
+		poids = new double[nbCouches - 1][][];
+		N = new double[nbCouches][];
+		S = new double[nbCouches][];
+
 		readFile(Path.of("iris.data"));
-		
+
 		for(int couche = 0; couche < nbCouches - 1; couche++){
 			poids[couche] = new double[nbNeurones[couche + 1]][];
 			for(int i = 0; i < nbNeurones[couche + 1]; i++){
@@ -71,7 +102,7 @@ public class Main{
 					LOGGER.debug("Apprent time={} class={}, index={}", apprent, klass, apprentIndex);
 					double[] results = applyNetwork(data[klass][apprentIndex]);
 					for(int i = 0; i < results.length; i++){
-						retropropagation(i, i == klass ? 1 : 0);
+						retropropagation(i, i == klass ? 1 : -1);
 					}
 				}
 			}
@@ -110,7 +141,7 @@ public class Main{
 			}
 		}
 	}
-	
+
 	private static void evaluation(){
 		int correctClass = 0;
 		int total = 0;
@@ -119,7 +150,7 @@ public class Main{
 			counts[i] = new int[nbClasses];
 		}
 		for(int klass = 0; klass < nbClasses; klass++){
-			for(int exIndex = nbExApprent; exIndex < nbEx; exIndex++){
+			for(int exIndex = nbExApprent; exIndex < nbEx - nbExValid; exIndex++){
 				double max = -Double.MAX_VALUE;
 				int classe = -1;
 				double[] output = applyNetwork(data[klass][exIndex]);
@@ -140,7 +171,42 @@ public class Main{
 				total++;
 			}
 		}
-		LOGGER.info("Taux de reconnaissance : {}%", correctClass * 100.0 / total);
+		LOGGER.info("Taux de eval : {}%", correctClass * 100.0 / total);
+		for(int[] count : counts){
+			LOGGER.info("{}", count);
+		}
+	}
+
+	private static void valid(){
+		int correctClass = 0;
+		int total = 0;
+		int[][] counts = new int[nbClasses][];
+		for(int i = 0; i < counts.length; i++){
+			counts[i] = new int[nbClasses];
+		}
+		for(int klass = 0; klass < nbClasses; klass++){
+			for(int exIndex = nbEx - nbExValid; exIndex < nbEx; exIndex++){
+				double max = -Double.MAX_VALUE;
+				int classe = -1;
+				double[] output = applyNetwork(data[klass][exIndex]);
+				for(int layerIndex = 0; layerIndex < output.length; layerIndex++){
+					if(output[layerIndex] > max){
+						max = output[layerIndex];
+						classe = layerIndex;
+					}
+				}
+				counts[klass][classe] += 1;
+				if(klass == classe){
+					LOGGER.debug("Classe {} - classe trouvée {}", klass, classe);
+					correctClass++;
+				}
+				else{
+					LOGGER.warn("Classe {} - classe trouvée {}", klass, classe);
+				}
+				total++;
+			}
+		}
+		LOGGER.info("Taux de validation : {}%", correctClass * 100.0 / total);
 		for(int[] count : counts){
 			LOGGER.info("{}", count);
 		}
