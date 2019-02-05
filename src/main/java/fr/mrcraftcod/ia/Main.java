@@ -116,6 +116,10 @@ public class Main{
 	private static void evaluation(){
 		int correctClass = 0;
 		int total = 0;
+		int[][] counts = new int[nbClasses][];
+		for(int i = 0; i < counts.length; i++){
+			counts[i] = new int[nbClasses];
+		}
 		for(int klass = 0; klass < nbClasses; klass++){
 			for(int exIndex = nbExApprent; exIndex < nbEx; exIndex++){
 				double max = -Double.MAX_VALUE;
@@ -127,6 +131,7 @@ public class Main{
 						classe = layerIndex;
 					}
 				}
+				counts[klass][classe] += 1;
 				if(klass == classe){
 					LOGGER.debug("Classe {} - classe trouvée {}", klass, classe);
 					correctClass++;
@@ -138,6 +143,9 @@ public class Main{
 			}
 		}
 		LOGGER.info("Taux de reconnaissance : {}%", correctClass * 100.0 / total);
+		for(int[] count : counts){
+			LOGGER.info("{}", count);
+		}
 	}
 	
 	private static double[] applyNetwork(double[] data){
